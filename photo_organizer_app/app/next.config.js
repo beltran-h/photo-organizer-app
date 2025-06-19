@@ -15,8 +15,10 @@ const nextConfig = {
       },
     ],
   },
-  // Configuración para funcionar bien en Vercel
-  output: 'standalone',
+  // Configuración específica para Vercel deployment
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client']
+  },
 };
 
 module.exports = nextConfig;
