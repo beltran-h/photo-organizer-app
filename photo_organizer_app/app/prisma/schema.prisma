@@ -1,0 +1,99 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/photo_organizer_app/app/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Photo {
+  id          String   @id @default(cuid())
+  name        String
+  originalUrl String   // URL.createObjectURL for original image
+  thumbnail   String?  // Base64 encoded thumbnail for export
+  size        Int
+  type        String
+  
+  // Metadata
+  photographer String?
+  brands       String[] // Array of brand names
+  description  String?
+  hashtags     String?
+  location     String?
+  priority     Priority @default(MEDIUM)
+  
+  // Scheduling
+  scheduledDate DateTime?
+  scheduledTime String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("photos")
+}
+
+model Photographer {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("photographers")
+}
+
+model Brand {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("brands")
+}
+
+model CaptionTemplate {
+  id          String   @id @default(cuid())
+  photoId     String?  // Optional reference to photo
+  
+  // Basic settings
+  language    String   @default("English")
+  postStyle   String   @default("Bold & Unapologetic")
+  customStyle String?
+  
+  // Brand collaboration
+  hasBrandCollab Boolean @default(false)
+  brandName      String?
+  brandHandle    String?
+  discountCode   String?
+  sponsoredTag   String?
+  
+  // Content details
+  pictureDesc    String?
+  eventName      String?
+  venue          String?
+  city           String?
+  country        String?
+  taggedPeople   String?
+  communityTags  String?
+  
+  // Hashtags
+  mainCategory   String?
+  subCategory    String?
+  customHashtags String?
+  
+  // Generated content
+  generatedPrompt String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("caption_templates")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
